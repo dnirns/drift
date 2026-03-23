@@ -1,6 +1,7 @@
 import { StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import PlayButton from '@/components/PlayButton';
+import NoiseColorSelector from '@/components/NoiseColorSelector';
 import Slider from '@/components/Slider';
 import { useAudioEngine } from '@/hooks/useAudioEngine';
 import { useAppStore } from '@/store/useAppStore';
@@ -11,6 +12,7 @@ export default function MainScreen() {
 
   const tone = useAppStore((s) => s.tone);
   const volume = useAppStore((s) => s.volume);
+  const isCustom = useAppStore((s) => s.noiseColor === 'custom');
   const setTone = useAppStore((s) => s.setTone);
   const setVolume = useAppStore((s) => s.setVolume);
 
@@ -25,7 +27,10 @@ export default function MainScreen() {
       </View>
 
       <View style={styles.sliders}>
-        <Slider label="Tone" value={tone} onValueChange={setTone} />
+        <NoiseColorSelector />
+        {isCustom && (
+          <Slider label="Tone" value={tone} onValueChange={setTone} />
+        )}
         <Slider label="Volume" value={volume} onValueChange={setVolume} />
       </View>
     </SafeAreaView>

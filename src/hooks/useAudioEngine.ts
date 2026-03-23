@@ -12,6 +12,7 @@ import {
   TONE_MAX_FREQUENCY,
 } from '@/constants/audio';
 import { useAppStore } from '@/store/useAppStore';
+import { fillNoiseBuffer } from '@/audio/noiseGenerators';
 
 function mapToneToFrequency(normalized: number): number {
   return (
@@ -46,9 +47,7 @@ function ensureContext(
       sampleRate,
     );
     const data = buffer.getChannelData(0);
-    for (let i = 0; i < data.length; i++) {
-      data[i] = Math.random() * 2 - 1;
-    }
+    fillNoiseBuffer(data, useAppStore.getState().noiseColor);
 
     contextRef.current = ctx;
     bufferRef.current = buffer;
@@ -101,6 +100,21 @@ export function useAudioEngine(): void {
 
       if (state.volume !== prevState.volume && gainRef.current) {
         gainRef.current.gain.value = state.volume;
+      }
+
+      if (state.noiseColor !== prevState.noiseColor && bufferRef.current) {
+        const data = bufferRef.current.getChannelData(0);
+        fillNoiseBuffer(data, state.noiseColor);
+
+        if (state.isPlaying && contextRef.current && filterRef.current) {
+          stopSource(sourceRef);
+          const source = contextRef.current.createBufferSource();
+          source.buffer = bufferRef.current;
+          source.loop = true;
+          source.connect(filterRef.current);
+          source.start(0);
+          sourceRef.current = source;
+        }
       }
     });
 
