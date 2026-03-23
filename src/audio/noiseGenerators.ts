@@ -75,6 +75,48 @@ function fillBlueNoise(data: Float32Array): void {
   normalize(data);
 }
 
+const SPECTRUM_STOPS: { position: number; fill: (data: Float32Array) => void }[] = [
+  { position: 0, fill: fillBrownNoise },
+  { position: 0.33, fill: fillPinkNoise },
+  { position: 0.67, fill: fillWhiteNoise },
+  { position: 1.0, fill: fillBlueNoise },
+];
+
+/**
+ * Generates noise by blending between two adjacent colors on the spectrum.
+ * Position 0 = brown, 0.33 = pink, 0.67 = white, 1.0 = blue.
+ */
+export function fillBlendedNoiseBuffer(
+  data: Float32Array,
+  position: number,
+): void {
+  const clamped = Math.max(0, Math.min(1, position));
+
+  let lower = SPECTRUM_STOPS[0];
+  let upper = SPECTRUM_STOPS[SPECTRUM_STOPS.length - 1];
+  for (let i = 0; i < SPECTRUM_STOPS.length - 1; i++) {
+    if (
+      clamped >= SPECTRUM_STOPS[i].position &&
+      clamped <= SPECTRUM_STOPS[i + 1].position
+    ) {
+      lower = SPECTRUM_STOPS[i];
+      upper = SPECTRUM_STOPS[i + 1];
+      break;
+    }
+  }
+
+  lower.fill(data);
+
+  if (lower === upper || lower.position === upper.position) return;
+
+  const t = (clamped - lower.position) / (upper.position - lower.position);
+  const temp = new Float32Array(data.length);
+  upper.fill(temp);
+  for (let i = 0; i < data.length; i++) {
+    data[i] = data[i] * (1 - t) + temp[i] * t;
+  }
+}
+
 export function fillNoiseBuffer(data: Float32Array, color: NoiseColor): void {
   switch (color) {
     case 'white':

@@ -29,7 +29,7 @@ export default function MainScreen() {
       <View style={styles.sliders}>
         <NoiseColorSelector />
         {isCustom && (
-          <Slider label="Tone" value={tone} onValueChange={setTone} />
+          <Slider label="Spectrum" value={tone} onValueChange={setTone} />
         )}
         <Slider label="Volume" value={volume} onValueChange={setVolume} />
       </View>
