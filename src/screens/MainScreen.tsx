@@ -10,10 +10,7 @@ import { COLORS } from '@/constants/theme';
 export default function MainScreen() {
   useAudioEngine();
 
-  const tone = useAppStore((s) => s.tone);
   const volume = useAppStore((s) => s.volume);
-  const isCustom = useAppStore((s) => s.noiseColor === 'custom');
-  const setTone = useAppStore((s) => s.setTone);
   const setVolume = useAppStore((s) => s.setVolume);
 
   return (
@@ -28,9 +25,6 @@ export default function MainScreen() {
 
       <View style={styles.sliders}>
         <NoiseColorSelector />
-        {isCustom && (
-          <Slider label="Spectrum" value={tone} onValueChange={setTone} />
-        )}
         <Slider label="Volume" value={volume} onValueChange={setVolume} />
       </View>
     </SafeAreaView>

@@ -1,5 +1,9 @@
 import { useAppStore } from '@/store/useAppStore';
-import { PRESET_TONES, DEFAULT_VOLUME, DEFAULT_NOISE_COLOR } from '@/constants/audio';
+import {
+  PRESET_TONES,
+  DEFAULT_VOLUME,
+  DEFAULT_NOISE_COLOR,
+} from '@/constants/audio';
 
 // Reset store between tests
 beforeEach(() => {

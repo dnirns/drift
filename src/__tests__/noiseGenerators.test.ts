@@ -1,4 +1,7 @@
-import { fillNoiseBuffer, fillBlendedNoiseBuffer } from '@/audio/noiseGenerators';
+import {
+  fillNoiseBuffer,
+  fillBlendedNoiseBuffer,
+} from '@/audio/noiseGenerators';
 
 const BUFFER_SIZE = 4096;
 

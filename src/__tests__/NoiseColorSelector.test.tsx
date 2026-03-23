@@ -2,7 +2,11 @@ import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react-native';
 import NoiseColorSelector from '@/components/NoiseColorSelector';
 import { useAppStore } from '@/store/useAppStore';
-import { PRESET_TONES, DEFAULT_VOLUME, DEFAULT_NOISE_COLOR } from '@/constants/audio';
+import {
+  PRESET_TONES,
+  DEFAULT_VOLUME,
+  DEFAULT_NOISE_COLOR,
+} from '@/constants/audio';
 
 beforeEach(() => {
   useAppStore.setState({
