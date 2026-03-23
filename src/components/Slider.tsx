@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, LayoutChangeEvent } from 'react-native';
+import { StyleSheet, Text, View, ViewStyle, LayoutChangeEvent } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, {
   useAnimatedStyle,
@@ -11,12 +11,13 @@ interface SliderProps {
   label: string;
   value: number;
   onValueChange: (value: number) => void;
+  style?: ViewStyle;
 }
 
 const THUMB_SIZE = 28;
 const TRACK_HEIGHT = 6;
 
-export default function Slider({ label, value, onValueChange }: SliderProps) {
+export default function Slider({ label, value, onValueChange, style }: SliderProps) {
   const trackWidth = useSharedValue(0);
   const translateX = useSharedValue(0);
   const startX = useSharedValue(0);
@@ -49,7 +50,7 @@ export default function Slider({ label, value, onValueChange }: SliderProps) {
   }));
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, style]}>
       <Text style={styles.label}>{label}</Text>
       <View style={styles.trackContainer} onLayout={onLayout}>
         <View style={styles.track} />

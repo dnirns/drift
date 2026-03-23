@@ -92,13 +92,23 @@ export default function NoiseColorSelector() {
         ))}
       </View>
       <View style={styles.detailArea}>
-        {isCustom ? (
-          <Slider label="Spectrum" value={tone} onValueChange={setTone} />
-        ) : (
-          description != null && (
-            <Text style={styles.description}>{description}</Text>
-          )
-        )}
+        <View
+          style={[styles.detailLayer, { opacity: isCustom ? 1 : 0 }]}
+          pointerEvents={isCustom ? 'auto' : 'none'}
+        >
+          <Slider
+            label="Spectrum"
+            value={tone}
+            onValueChange={setTone}
+            style={styles.slider}
+          />
+        </View>
+        <View
+          style={[styles.detailLayer, { opacity: !isCustom && description != null ? 1 : 0 }]}
+          pointerEvents="none"
+        >
+          <Text style={styles.description}>{description}</Text>
+        </View>
       </View>
     </View>
   );
@@ -124,15 +134,22 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   detailArea: {
-    height: 88,
+    height: 120,
+    marginHorizontal: -16,
+  },
+  detailLayer: {
+    ...StyleSheet.absoluteFillObject,
     justifyContent: 'center',
+  },
+  slider: {
+    marginVertical: 0,
   },
   description: {
     color: COLORS.secondary,
-    fontSize: 12,
-    lineHeight: 18,
+    fontSize: 13,
+    lineHeight: 20,
     textAlign: 'center',
-    paddingHorizontal: 16,
+    paddingHorizontal: 40,
     opacity: 0.7,
   },
   pill: {
