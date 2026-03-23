@@ -1,8 +1,10 @@
-import { memo } from 'react';
+import { memo, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { COLORS } from '@/constants/theme';
 import { useAppStore } from '@/store/useAppStore';
 import Slider from '@/components/Slider';
+import SavePresetModal from '@/components/SavePresetModal';
+import SavedPresetsList from '@/components/SavedPresetsList';
 import type { NoiseColor } from '@/types';
 
 interface PillProps {
@@ -73,9 +75,16 @@ export default function NoiseColorSelector() {
   const setNoiseColor = useAppStore((s) => s.setNoiseColor);
   const tone = useAppStore((s) => s.tone);
   const setTone = useAppStore((s) => s.setTone);
+  const savePreset = useAppStore((s) => s.savePreset);
+  const [modalVisible, setModalVisible] = useState(false);
 
   const isCustom = noiseColor === 'custom';
   const description = NOISE_DESCRIPTIONS[noiseColor];
+
+  const handleSave = (name: string) => {
+    savePreset(name);
+    setModalVisible(false);
+  };
 
   return (
     <View style={styles.container}>
@@ -91,6 +100,7 @@ export default function NoiseColorSelector() {
           />
         ))}
       </View>
+      <SavedPresetsList />
       <View style={styles.detailArea}>
         <View
           style={[styles.detailLayer, { opacity: isCustom ? 1 : 0 }]}
@@ -102,6 +112,12 @@ export default function NoiseColorSelector() {
             onValueChange={setTone}
             style={styles.slider}
           />
+          <Pressable
+            style={styles.saveButton}
+            onPress={() => setModalVisible(true)}
+          >
+            <Text style={styles.saveButtonText}>Save Preset</Text>
+          </Pressable>
         </View>
         <View
           style={[styles.detailLayer, { opacity: !isCustom && description != null ? 1 : 0 }]}
@@ -110,6 +126,11 @@ export default function NoiseColorSelector() {
           <Text style={styles.description}>{description}</Text>
         </View>
       </View>
+      <SavePresetModal
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
+        onSave={handleSave}
+      />
     </View>
   );
 }
@@ -143,6 +164,21 @@ const styles = StyleSheet.create({
   },
   slider: {
     marginVertical: 0,
+  },
+  saveButton: {
+    alignSelf: 'center',
+    marginTop: 12,
+    paddingVertical: 6,
+    paddingHorizontal: 14,
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: COLORS.accent,
+  },
+  saveButtonText: {
+    color: COLORS.accent,
+    fontSize: 12,
+    fontWeight: '600',
+    letterSpacing: 0.5,
   },
   description: {
     color: COLORS.secondary,

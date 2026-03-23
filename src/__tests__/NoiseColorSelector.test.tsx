@@ -15,6 +15,8 @@ beforeEach(() => {
     volume: DEFAULT_VOLUME,
     noiseColor: DEFAULT_NOISE_COLOR,
     customTone: 0.5,
+    savedPresets: [],
+    activePresetId: null,
   });
 });
 
