@@ -11,6 +11,14 @@ interface PillProps {
   onPress: (color: NoiseColor) => void;
 }
 
+const ACTIVE_COLORS: Record<NoiseColor, string> = {
+  white: '#B0B0B0',
+  pink: '#D4628E',
+  brown: '#8B6A4A',
+  blue: '#4A7BD4',
+  custom: COLORS.accent,
+};
+
 const NOISE_OPTIONS: { color: NoiseColor; label: string }[] = [
   { color: 'white', label: 'White' },
   { color: 'pink', label: 'Pink' },
@@ -25,12 +33,25 @@ const NoiseColorPill = memo(function NoiseColorPill({
   isActive,
   onPress,
 }: PillProps) {
+  const activeColor = ACTIVE_COLORS[color];
+  const isCustom = color === 'custom';
+
   return (
     <Pressable
-      style={[styles.pill, isActive && styles.pillActive]}
+      style={[
+        styles.pill,
+        isActive && { backgroundColor: activeColor },
+        isCustom && !isActive && styles.pillCustomInactive,
+      ]}
       onPress={() => onPress(color)}
     >
-      <Text style={[styles.pillText, isActive && styles.pillTextActive]}>
+      <Text
+        style={[
+          styles.pillText,
+          isActive && styles.pillTextActive,
+          isCustom && !isActive && styles.pillTextCustom,
+        ]}
+      >
         {label}
       </Text>
     </Pressable>
@@ -62,7 +83,7 @@ export default function NoiseColorSelector() {
 const styles = StyleSheet.create({
   container: {
     width: '100%',
-    paddingHorizontal: 32,
+    paddingHorizontal: 16,
     marginBottom: 20,
   },
   label: {
@@ -72,29 +93,36 @@ const styles = StyleSheet.create({
     letterSpacing: 1.5,
     textTransform: 'uppercase',
     marginBottom: 12,
+    paddingHorizontal: 16,
   },
   row: {
     flexDirection: 'row',
     justifyContent: 'center',
-    gap: 12,
+    gap: 8,
   },
   pill: {
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 20,
+    paddingVertical: 8,
+    paddingHorizontal: 14,
+    borderRadius: 18,
     backgroundColor: COLORS.surface,
   },
-  pillActive: {
-    backgroundColor: COLORS.accent,
+  pillCustomInactive: {
+    borderWidth: 1,
+    borderColor: COLORS.secondary,
+    borderStyle: 'dashed',
+    backgroundColor: 'transparent',
   },
   pillText: {
     color: COLORS.secondary,
-    fontSize: 13,
+    fontSize: 12,
     fontWeight: '600',
-    letterSpacing: 1,
+    letterSpacing: 0.5,
     textTransform: 'uppercase',
   },
   pillTextActive: {
     color: '#FFFFFF',
+  },
+  pillTextCustom: {
+    color: COLORS.secondary,
   },
 });

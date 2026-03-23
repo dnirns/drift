@@ -30,8 +30,11 @@
       "predictiveBackGestureEnabled": false,
       "permissions": [
         "android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK",
+        "android.permission.FOREGROUND_SERVICE",
+        "android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK",
         "android.permission.FOREGROUND_SERVICE"
-      ]
+      ],
+      "package": "com.anonymous.drift"
     },
     "web": {
       "favicon": "./assets/favicon.png"
