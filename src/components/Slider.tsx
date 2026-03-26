@@ -1,4 +1,10 @@
-import { StyleSheet, Text, View, ViewStyle, LayoutChangeEvent } from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  ViewStyle,
+  LayoutChangeEvent,
+} from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, {
   useAnimatedStyle,
@@ -17,16 +23,16 @@ interface SliderProps {
 const THUMB_SIZE = 28;
 const TRACK_HEIGHT = 6;
 
-export default function Slider({ label, value, onValueChange, style }: SliderProps) {
+const Slider = ({ label, value, onValueChange, style }: SliderProps) => {
   const trackWidth = useSharedValue(0);
   const translateX = useSharedValue(0);
   const startX = useSharedValue(0);
 
-  function onLayout(event: LayoutChangeEvent) {
+  const onLayout = (event: LayoutChangeEvent) => {
     const width = event.nativeEvent.layout.width;
     trackWidth.value = width;
     translateX.value = value * (width - THUMB_SIZE);
-  }
+  };
 
   const pan = Gesture.Pan()
     .onStart(() => {
@@ -61,7 +67,9 @@ export default function Slider({ label, value, onValueChange, style }: SliderPro
       </View>
     </View>
   );
-}
+};
+
+export default Slider;
 
 const styles = StyleSheet.create({
   container: {

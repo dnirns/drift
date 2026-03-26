@@ -5,7 +5,6 @@ import {
   DEFAULT_NOISE_COLOR,
 } from '@/constants/audio';
 
-// Reset store between tests
 beforeEach(() => {
   useAppStore.setState({
     isPlaying: false,
@@ -68,13 +67,10 @@ describe('useAppStore', () => {
     });
 
     it('switching to custom restores the remembered custom tone', () => {
-      // Set a custom tone first
       useAppStore.getState().setTone(0.25);
-      // Switch to a preset
       useAppStore.getState().setNoiseColor('brown');
       expect(useAppStore.getState().tone).toBe(PRESET_TONES.brown);
 
-      // Switch back to custom — should restore 0.25
       useAppStore.getState().setNoiseColor('custom');
       expect(useAppStore.getState().tone).toBe(0.25);
     });
@@ -82,7 +78,6 @@ describe('useAppStore', () => {
     it('preset tones do not overwrite customTone', () => {
       useAppStore.getState().setTone(0.4);
       useAppStore.getState().setNoiseColor('blue');
-      // customTone should still be 0.4
       expect(useAppStore.getState().customTone).toBe(0.4);
     });
   });
@@ -146,7 +141,6 @@ describe('useAppStore', () => {
         useAppStore.getState().savePreset('Deep');
         const id = useAppStore.getState().savedPresets[0].id;
 
-        // Switch away from custom
         useAppStore.getState().setNoiseColor('pink');
 
         useAppStore.getState().loadPreset(id);

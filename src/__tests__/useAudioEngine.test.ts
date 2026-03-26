@@ -7,10 +7,7 @@ import {
   HIGHPASS_MAX,
 } from '@/hooks/useAudioEngine';
 import { useAppStore } from '@/store/useAppStore';
-import {
-  TONE_MIN_FREQUENCY,
-  TONE_MAX_FREQUENCY,
-} from '@/constants/audio';
+import { TONE_MIN_FREQUENCY, TONE_MAX_FREQUENCY } from '@/constants/audio';
 import { AudioContext } from 'react-native-audio-api';
 
 // ---------------------------------------------------------------------------
@@ -42,8 +39,7 @@ describe('mapToneToFrequency', () => {
   it('uses logarithmic scaling (quarter ≠ linear quarter)', () => {
     const quarter = mapToneToFrequency(0.25);
     const linearQuarter =
-      TONE_MIN_FREQUENCY +
-      0.25 * (TONE_MAX_FREQUENCY - TONE_MIN_FREQUENCY);
+      TONE_MIN_FREQUENCY + 0.25 * (TONE_MAX_FREQUENCY - TONE_MIN_FREQUENCY);
     expect(quarter).not.toBeCloseTo(linearQuarter, 0);
     // Logarithmic: 0.25 maps well below linear midpoint
     expect(quarter).toBeLessThan(linearQuarter);
@@ -105,8 +101,16 @@ describe('mapSpectrumToFilters', () => {
 // ---------------------------------------------------------------------------
 
 describe('useAudioEngine', () => {
-  let mockLowpass: { type: string; frequency: { value: number }; connect: jest.Mock };
-  let mockHighpass: { type: string; frequency: { value: number }; connect: jest.Mock };
+  let mockLowpass: {
+    type: string;
+    frequency: { value: number };
+    connect: jest.Mock;
+  };
+  let mockHighpass: {
+    type: string;
+    frequency: { value: number };
+    connect: jest.Mock;
+  };
   let mockGain: { gain: { value: number }; connect: jest.Mock };
   let mockCtx: Record<string, unknown>;
 
@@ -119,8 +123,16 @@ describe('useAudioEngine', () => {
     });
     jest.clearAllMocks();
 
-    mockLowpass = { type: 'lowpass', frequency: { value: 0 }, connect: jest.fn() };
-    mockHighpass = { type: 'highpass', frequency: { value: 0 }, connect: jest.fn() };
+    mockLowpass = {
+      type: 'lowpass',
+      frequency: { value: 0 },
+      connect: jest.fn(),
+    };
+    mockHighpass = {
+      type: 'highpass',
+      frequency: { value: 0 },
+      connect: jest.fn(),
+    };
     mockGain = { gain: { value: 1 }, connect: jest.fn() };
 
     let filterCount = 0;
@@ -142,22 +154,24 @@ describe('useAudioEngine', () => {
         return filterCount === 1 ? mockLowpass : mockHighpass;
       }),
       createGain: jest.fn().mockReturnValue(mockGain),
-      createBuffer: jest.fn().mockImplementation((_ch: number, len: number) => ({
-        getChannelData: jest.fn().mockReturnValue(new Float32Array(len)),
-        length: len,
-        sampleRate: 44100,
-        numberOfChannels: 1,
-      })),
+      createBuffer: jest
+        .fn()
+        .mockImplementation((_ch: number, len: number) => ({
+          getChannelData: jest.fn().mockReturnValue(new Float32Array(len)),
+          length: len,
+          sampleRate: 44100,
+          numberOfChannels: 1,
+        })),
     };
 
     (AudioContext as jest.Mock).mockImplementation(() => mockCtx);
   });
 
-  function startPlayback() {
+  const startPlayback = () => {
     act(() => {
       useAppStore.getState().togglePlayback();
     });
-  }
+  };
 
   it('creates AudioContext and starts source when playing', () => {
     renderHook(() => useAudioEngine());
@@ -165,17 +179,17 @@ describe('useAudioEngine', () => {
     startPlayback();
 
     expect(AudioContext).toHaveBeenCalledTimes(1);
-    expect((mockCtx.resume as jest.Mock)).toHaveBeenCalled();
-    expect((mockCtx.createBufferSource as jest.Mock)).toHaveBeenCalled();
+    expect(mockCtx.resume as jest.Mock).toHaveBeenCalled();
+    expect(mockCtx.createBufferSource as jest.Mock).toHaveBeenCalled();
   });
 
   it('stops source when pausing', () => {
     renderHook(() => useAudioEngine());
 
     startPlayback();
-    const source = (mockCtx.createBufferSource as jest.Mock).mock.results[0].value;
+    const source = (mockCtx.createBufferSource as jest.Mock).mock.results[0]
+      .value;
 
-    // Pause
     act(() => {
       useAppStore.getState().togglePlayback();
     });
@@ -227,16 +241,15 @@ describe('useAudioEngine', () => {
     renderHook(() => useAudioEngine());
 
     startPlayback();
-    const firstSource = (mockCtx.createBufferSource as jest.Mock).mock.results[0].value;
+    const firstSource = (mockCtx.createBufferSource as jest.Mock).mock
+      .results[0].value;
 
     act(() => {
       useAppStore.getState().setNoiseColor('brown');
     });
 
-    // Old source stopped, new source created
     expect(firstSource.stop).toHaveBeenCalled();
-    // createBufferSource called once for initial play, once for restart
-    expect((mockCtx.createBufferSource as jest.Mock)).toHaveBeenCalledTimes(2);
+    expect(mockCtx.createBufferSource as jest.Mock).toHaveBeenCalledTimes(2);
   });
 
   it('resets highpass when switching from custom to named preset', () => {
@@ -259,7 +272,7 @@ describe('useAudioEngine', () => {
 
     unmount();
 
-    expect((mockCtx.close as jest.Mock)).toHaveBeenCalled();
+    expect(mockCtx.close as jest.Mock).toHaveBeenCalled();
   });
 
   it('does not create context when not playing', () => {

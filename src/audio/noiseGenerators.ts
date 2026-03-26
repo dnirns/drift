@@ -1,6 +1,6 @@
 import type { NoiseColor } from '@/types';
 
-function normalize(data: Float32Array): void {
+const normalize = (data: Float32Array): void => {
   let max = 0;
   for (let i = 0; i < data.length; i++) {
     const abs = Math.abs(data[i]);
@@ -11,20 +11,20 @@ function normalize(data: Float32Array): void {
       data[i] /= max;
     }
   }
-}
+};
 
-function fillWhiteNoise(data: Float32Array): void {
+const fillWhiteNoise = (data: Float32Array): void => {
   for (let i = 0; i < data.length; i++) {
     data[i] = Math.random() * 2 - 1;
   }
-}
+};
 
 /**
  * Paul Kellet's refined pink noise filter (±0.5dB accuracy).
  * Applies 6 cascaded first-order filter states to white noise,
  * producing a −3dB/octave spectral slope.
  */
-function fillPinkNoise(data: Float32Array): void {
+const fillPinkNoise = (data: Float32Array): void => {
   let b0 = 0;
   let b1 = 0;
   let b2 = 0;
@@ -44,14 +44,14 @@ function fillPinkNoise(data: Float32Array): void {
     data[i] = (b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362) * 0.11;
     b6 = white * 0.115926;
   }
-}
+};
 
 /**
  * Brown (Brownian/red) noise via leaky integrator.
  * Produces a −6dB/octave spectral slope.
  * The leak factor (0.99) prevents DC drift.
  */
-function fillBrownNoise(data: Float32Array): void {
+const fillBrownNoise = (data: Float32Array): void => {
   let brown = 0;
   for (let i = 0; i < data.length; i++) {
     const white = Math.random() * 2 - 1;
@@ -59,13 +59,13 @@ function fillBrownNoise(data: Float32Array): void {
     data[i] = brown;
   }
   normalize(data);
-}
+};
 
 /**
  * Blue noise via first-order differentiation of white noise.
  * Produces a +3dB/octave spectral slope.
  */
-function fillBlueNoise(data: Float32Array): void {
+const fillBlueNoise = (data: Float32Array): void => {
   let prev = Math.random() * 2 - 1;
   for (let i = 0; i < data.length; i++) {
     const white = Math.random() * 2 - 1;
@@ -73,9 +73,12 @@ function fillBlueNoise(data: Float32Array): void {
     prev = white;
   }
   normalize(data);
-}
+};
 
-const SPECTRUM_STOPS: { position: number; fill: (data: Float32Array) => void }[] = [
+const SPECTRUM_STOPS: {
+  position: number;
+  fill: (data: Float32Array) => void;
+}[] = [
   { position: 0, fill: fillBrownNoise },
   { position: 0.33, fill: fillPinkNoise },
   { position: 0.67, fill: fillWhiteNoise },
@@ -86,10 +89,10 @@ const SPECTRUM_STOPS: { position: number; fill: (data: Float32Array) => void }[]
  * Generates noise by blending between two adjacent colors on the spectrum.
  * Position 0 = brown, 0.33 = pink, 0.67 = white, 1.0 = blue.
  */
-export function fillBlendedNoiseBuffer(
+export const fillBlendedNoiseBuffer = (
   data: Float32Array,
   position: number,
-): void {
+): void => {
   const clamped = Math.max(0, Math.min(1, position));
 
   let lower = SPECTRUM_STOPS[0];
@@ -115,9 +118,12 @@ export function fillBlendedNoiseBuffer(
   for (let i = 0; i < data.length; i++) {
     data[i] = data[i] * (1 - t) + temp[i] * t;
   }
-}
+};
 
-export function fillNoiseBuffer(data: Float32Array, color: NoiseColor): void {
+export const fillNoiseBuffer = (
+  data: Float32Array,
+  color: NoiseColor,
+): void => {
   switch (color) {
     case 'white':
     case 'custom':
@@ -133,4 +139,4 @@ export function fillNoiseBuffer(data: Float32Array, color: NoiseColor): void {
       fillBlueNoise(data);
       break;
   }
-}
+};

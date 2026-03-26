@@ -5,21 +5,21 @@ import {
 
 const BUFFER_SIZE = 4096;
 
-function createBuffer(): Float32Array {
+const createBuffer = (): Float32Array => {
   return new Float32Array(BUFFER_SIZE);
-}
+};
 
-function mean(data: Float32Array): number {
+const mean = (data: Float32Array): number => {
   let sum = 0;
   for (let i = 0; i < data.length; i++) sum += data[i];
   return sum / data.length;
-}
+};
 
-function rms(data: Float32Array): number {
+const rms = (data: Float32Array): number => {
   let sum = 0;
   for (let i = 0; i < data.length; i++) sum += data[i] * data[i];
   return Math.sqrt(sum / data.length);
-}
+};
 
 describe('fillNoiseBuffer', () => {
   it('fills buffer with white noise (values in [-1, 1])', () => {
@@ -59,7 +59,6 @@ describe('fillNoiseBuffer', () => {
       const abs = Math.abs(data[i]);
       if (abs > max) max = abs;
     }
-    // Brown noise is normalized, so peak should be ~1
     expect(max).toBeCloseTo(1, 1);
   });
 
@@ -78,7 +77,6 @@ describe('fillNoiseBuffer', () => {
   it('custom color falls back to white noise', () => {
     const data = createBuffer();
     fillNoiseBuffer(data, 'custom');
-    // Should produce the same kind of output as white noise (non-zero energy)
     expect(rms(data)).toBeGreaterThan(0.3);
   });
 
@@ -122,7 +120,6 @@ describe('fillBlendedNoiseBuffer', () => {
     const dataLow = createBuffer();
     const dataHigh = createBuffer();
 
-    // Should not throw
     fillBlendedNoiseBuffer(dataLow, -1);
     fillBlendedNoiseBuffer(dataHigh, 2);
 

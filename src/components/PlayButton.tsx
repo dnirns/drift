@@ -11,7 +11,20 @@ const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 const BUTTON_SIZE = 120;
 
-export default function PlayButton() {
+const PlayIcon = () => {
+  return <View style={styles.playTriangle} />;
+};
+
+const PauseIcon = () => {
+  return (
+    <View style={styles.pauseContainer}>
+      <View style={styles.pauseBar} />
+      <View style={styles.pauseBar} />
+    </View>
+  );
+};
+
+const PlayButton = () => {
   const isPlaying = useAppStore((s) => s.isPlaying);
   const togglePlayback = useAppStore((s) => s.togglePlayback);
   const scale = useSharedValue(1);
@@ -20,13 +33,13 @@ export default function PlayButton() {
     transform: [{ scale: scale.value }],
   }));
 
-  function handlePressIn() {
+  const handlePressIn = () => {
     scale.value = withSpring(0.9, { damping: 15, stiffness: 300 });
-  }
+  };
 
-  function handlePressOut() {
+  const handlePressOut = () => {
     scale.value = withSpring(1, { damping: 15, stiffness: 300 });
-  }
+  };
 
   return (
     <AnimatedPressable
@@ -38,20 +51,9 @@ export default function PlayButton() {
       {isPlaying ? <PauseIcon /> : <PlayIcon />}
     </AnimatedPressable>
   );
-}
+};
 
-function PlayIcon() {
-  return <View style={styles.playTriangle} />;
-}
-
-function PauseIcon() {
-  return (
-    <View style={styles.pauseContainer}>
-      <View style={styles.pauseBar} />
-      <View style={styles.pauseBar} />
-    </View>
-  );
-}
+export default PlayButton;
 
 const styles = StyleSheet.create({
   button: {
