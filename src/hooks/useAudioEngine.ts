@@ -14,15 +14,12 @@ import {
 import { useAppStore } from '@/store/useAppStore';
 import { fillNoiseBuffer } from '@/audio/noiseGenerators';
 
-const HIGHPASS_MIN = 20;
-const HIGHPASS_MAX = 8000;
+export const HIGHPASS_MIN = 20;
+export const HIGHPASS_MAX = 8000;
 
-function mapToneToFrequency(normalized: number): number {
-  return (
-    TONE_MIN_FREQUENCY *
-    Math.pow(TONE_MAX_FREQUENCY / TONE_MIN_FREQUENCY, normalized)
-  );
-}
+export const mapToneToFrequency = (normalized: number): number =>
+  TONE_MIN_FREQUENCY *
+  Math.pow(TONE_MAX_FREQUENCY / TONE_MIN_FREQUENCY, normalized);
 
 /**
  * Maps the custom spectrum slider (0–1) to lowpass + highpass filter frequencies.
@@ -31,10 +28,12 @@ function mapToneToFrequency(normalized: number): number {
  * 0.5 = white (both filters wide open)
  * 1.0 = blue (lowpass open, highpass at max)
  */
-function mapSpectrumToFilters(position: number): {
+export const mapSpectrumToFilters = (
+  position: number,
+): {
   lowpassFreq: number;
   highpassFreq: number;
-} {
+} => {
   if (position <= 0.5) {
     // Left half: sweep lowpass from min → max, highpass stays off
     const t = position / 0.5; // 0 → 1
@@ -49,13 +48,13 @@ function mapSpectrumToFilters(position: number): {
       HIGHPASS_MIN * Math.pow(HIGHPASS_MAX / HIGHPASS_MIN, t);
     return { lowpassFreq: TONE_MAX_FREQUENCY, highpassFreq };
   }
-}
+};
 
-function applyCustomFilters(
+const applyCustomFilters = (
   lowpassRef: React.MutableRefObject<BiquadFilterNode | null>,
   highpassRef: React.MutableRefObject<BiquadFilterNode | null>,
   position: number,
-): void {
+): void => {
   const { lowpassFreq, highpassFreq } = mapSpectrumToFilters(position);
   if (lowpassRef.current) {
     lowpassRef.current.frequency.value = lowpassFreq;
@@ -63,15 +62,15 @@ function applyCustomFilters(
   if (highpassRef.current) {
     highpassRef.current.frequency.value = highpassFreq;
   }
-}
+};
 
-function ensureContext(
+const ensureContext = (
   contextRef: React.MutableRefObject<AudioContext | null>,
   bufferRef: React.MutableRefObject<AudioBuffer | null>,
   lowpassRef: React.MutableRefObject<BiquadFilterNode | null>,
   highpassRef: React.MutableRefObject<BiquadFilterNode | null>,
   gainRef: React.MutableRefObject<GainNode | null>,
-): AudioContext {
+): AudioContext => {
   if (!contextRef.current) {
     const ctx = new AudioContext();
     const { tone, volume, noiseColor } = useAppStore.getState();
@@ -121,24 +120,24 @@ function ensureContext(
   }
 
   return contextRef.current;
-}
+};
 
-function stopSource(
+const stopSource = (
   sourceRef: React.MutableRefObject<AudioBufferSourceNode | null>,
-): void {
+): void => {
   if (sourceRef.current) {
     sourceRef.current.stop(0);
     sourceRef.current.disconnect();
     sourceRef.current = null;
   }
-}
+};
 
-function restartSource(
+const restartSource = (
   contextRef: React.MutableRefObject<AudioContext | null>,
   bufferRef: React.MutableRefObject<AudioBuffer | null>,
   sourceRef: React.MutableRefObject<AudioBufferSourceNode | null>,
   lowpassRef: React.MutableRefObject<BiquadFilterNode | null>,
-): void {
+): void => {
   if (!contextRef.current || !bufferRef.current || !lowpassRef.current) return;
   stopSource(sourceRef);
   const source = contextRef.current.createBufferSource();
@@ -147,9 +146,9 @@ function restartSource(
   source.connect(lowpassRef.current);
   source.start(0);
   sourceRef.current = source;
-}
+};
 
-export function useAudioEngine(): void {
+export const useAudioEngine = (): void => {
   const contextRef = useRef<AudioContext | null>(null);
   const bufferRef = useRef<AudioBuffer | null>(null);
   const sourceRef = useRef<AudioBufferSourceNode | null>(null);
@@ -229,4 +228,4 @@ export function useAudioEngine(): void {
       }
     };
   }, []);
-}
+};

@@ -7,11 +7,42 @@ jest.mock('@react-native-async-storage/async-storage', () => ({
   removeItem: jest.fn(() => Promise.resolve()),
 }));
 
+// Mock react-native-gesture-handler
+jest.mock('react-native-gesture-handler', () => {
+  const View = require('react-native').View;
+  return {
+    GestureHandlerRootView: View,
+    GestureDetector: ({ children }: { children: React.ReactNode }) => children,
+    Gesture: {
+      Pan: () => ({
+        onStart: () => ({ onUpdate: () => ({ onEnd: () => ({}) }) }),
+        onUpdate: () => ({ onEnd: () => ({}) }),
+        onEnd: () => ({}),
+      }),
+      Tap: () => ({
+        onStart: () => ({}),
+        onEnd: () => ({}),
+      }),
+    },
+  };
+});
+
 // Mock react-native-reanimated
 jest.mock('react-native-reanimated', () => {
-  const Reanimated = require('react-native-reanimated/mock');
-  Reanimated.default.call = () => {};
-  return Reanimated;
+  const { View } = require('react-native');
+  return {
+    __esModule: true,
+    default: {
+      View,
+      createAnimatedComponent: (component: unknown) => component,
+      call: () => {},
+    },
+    useAnimatedStyle: (fn: () => object) => fn(),
+    useSharedValue: (initial: unknown) => ({ value: initial }),
+    withSpring: (val: unknown) => val,
+    withTiming: (val: unknown) => val,
+    runOnJS: (fn: (...args: unknown[]) => unknown) => fn,
+  };
 });
 
 // Mock react-native-audio-api
