@@ -85,8 +85,8 @@ const styles = StyleSheet.create({
   },
   title: {
     color: COLORS.primary,
+    fontFamily: 'BemboStd-Semibold',
     fontSize: 18,
-    fontWeight: '600',
     marginBottom: 20,
     textAlign: 'center',
   },
@@ -107,8 +107,8 @@ const styles = StyleSheet.create({
   },
   presetText: {
     color: COLORS.secondary,
+    fontFamily: 'BemboStd-Semibold',
     fontSize: 14,
-    fontWeight: '600',
   },
   presetTextActive: {
     color: '#FFFFFF',

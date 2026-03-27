@@ -47,14 +47,14 @@ const styles = StyleSheet.create({
   },
   text: {
     color: COLORS.secondary,
+    fontFamily: 'BemboStd',
     fontSize: 18,
-    fontWeight: '400',
   },
   infinity: {
     fontSize: 28,
   },
   textActive: {
     color: COLORS.accent,
-    fontWeight: '500',
+    fontFamily: 'BemboStd-Semibold',
   },
 });

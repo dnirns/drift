@@ -87,14 +87,15 @@ const styles = StyleSheet.create({
   },
   title: {
     color: COLORS.primary,
+    fontFamily: 'BemboStd-Semibold',
     fontSize: 18,
-    fontWeight: '600',
     marginBottom: 16,
     textAlign: 'center',
   },
   input: {
     backgroundColor: COLORS.trackBackground,
     color: COLORS.primary,
+    fontFamily: 'BemboStd',
     borderRadius: 10,
     paddingHorizontal: 14,
     paddingVertical: 12,
@@ -113,8 +114,8 @@ const styles = StyleSheet.create({
   },
   cancelText: {
     color: COLORS.secondary,
+    fontFamily: 'BemboStd-Semibold',
     fontSize: 14,
-    fontWeight: '600',
   },
   saveButton: {
     backgroundColor: COLORS.accent,
@@ -127,7 +128,7 @@ const styles = StyleSheet.create({
   },
   saveText: {
     color: '#FFFFFF',
+    fontFamily: 'BemboStd-Semibold',
     fontSize: 14,
-    fontWeight: '600',
   },
 });
