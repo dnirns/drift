@@ -6,7 +6,7 @@ export interface CustomPreset {
   tone: number; // spectrum slider position (0–1)
 }
 
-export interface AppState {
+export interface StoreState {
   isPlaying: boolean;
   tone: number; // normalized 0–1
   volume: number; // normalized 0–1
@@ -14,6 +14,8 @@ export interface AppState {
   customTone: number; // remembered tone for custom mode
   savedPresets: CustomPreset[];
   activePresetId: string | null;
+  timerDuration: number | null; // selected duration in seconds, null = infinity
+  timerRemaining: number | null; // seconds left on active countdown, null = infinity
   togglePlayback: () => void;
   setTone: (value: number) => void;
   setVolume: (value: number) => void;
@@ -21,4 +23,7 @@ export interface AppState {
   savePreset: (name: string) => void;
   deletePreset: (id: string) => void;
   loadPreset: (id: string) => void;
+  setTimerDuration: (seconds: number | null) => void;
+  setTimerRemaining: (seconds: number | null) => void;
+  timerExpired: () => void;
 }

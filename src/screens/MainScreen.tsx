@@ -2,13 +2,16 @@ import { StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import PlayButton from '@/components/PlayButton';
 import NoiseColorSelector from '@/components/NoiseColorSelector';
+import TimerButton from '@/components/TimerButton';
 import Slider from '@/components/Slider';
 import { useAudioEngine } from '@/hooks/useAudioEngine';
+import { useTimer } from '@/hooks/useTimer';
 import { useAppStore } from '@/store/useAppStore';
 import { COLORS } from '@/constants/theme';
 
 export default function MainScreen() {
   useAudioEngine();
+  useTimer();
 
   const volume = useAppStore((s) => s.volume);
   const setVolume = useAppStore((s) => s.setVolume);
@@ -16,7 +19,9 @@ export default function MainScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
+        <View style={styles.headerSpacer} />
         <Text style={styles.title}>Drift</Text>
+        <TimerButton />
       </View>
 
       <View style={styles.center}>
@@ -37,8 +42,14 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.background,
   },
   header: {
-    paddingTop: 16,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
+    paddingTop: 16,
+    paddingHorizontal: 20,
+  },
+  headerSpacer: {
+    flex: 1,
   },
   title: {
     color: COLORS.primary,

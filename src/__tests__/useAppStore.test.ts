@@ -14,6 +14,8 @@ beforeEach(() => {
     customTone: 0.5,
     savedPresets: [],
     activePresetId: null,
+    timerDuration: null,
+    timerRemaining: null,
   });
 });
 
@@ -79,6 +81,47 @@ describe('useAppStore', () => {
       useAppStore.getState().setTone(0.4);
       useAppStore.getState().setNoiseColor('blue');
       expect(useAppStore.getState().customTone).toBe(0.4);
+    });
+  });
+
+  describe('timer actions', () => {
+    it('has null timer state by default', () => {
+      const state = useAppStore.getState();
+      expect(state.timerDuration).toBeNull();
+      expect(state.timerRemaining).toBeNull();
+    });
+
+    it('setTimerDuration updates timerDuration', () => {
+      useAppStore.getState().setTimerDuration(3600);
+      expect(useAppStore.getState().timerDuration).toBe(3600);
+    });
+
+    it('setTimerDuration accepts null for infinity', () => {
+      useAppStore.getState().setTimerDuration(3600);
+      useAppStore.getState().setTimerDuration(null);
+      expect(useAppStore.getState().timerDuration).toBeNull();
+    });
+
+    it('setTimerRemaining updates timerRemaining', () => {
+      useAppStore.getState().setTimerRemaining(1800);
+      expect(useAppStore.getState().timerRemaining).toBe(1800);
+    });
+
+    it('timerExpired stops playback and clears remaining', () => {
+      useAppStore.setState({ isPlaying: true, timerRemaining: 10 });
+      useAppStore.getState().timerExpired();
+      expect(useAppStore.getState().isPlaying).toBe(false);
+      expect(useAppStore.getState().timerRemaining).toBeNull();
+    });
+
+    it('timerExpired does not clear timerDuration', () => {
+      useAppStore.setState({
+        isPlaying: true,
+        timerDuration: 3600,
+        timerRemaining: 0,
+      });
+      useAppStore.getState().timerExpired();
+      expect(useAppStore.getState().timerDuration).toBe(3600);
     });
   });
 

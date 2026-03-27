@@ -7,9 +7,9 @@ import {
   DEFAULT_NOISE_COLOR,
   PRESET_TONES,
 } from '@/constants/audio';
-import type { AppState, CustomPreset, NoiseColor } from '@/types';
+import type { StoreState, CustomPreset, NoiseColor } from '@/types';
 
-export const useAppStore = create<AppState>()(
+export const useAppStore = create<StoreState>()(
   persist(
     (set, get) => ({
       isPlaying: false,
@@ -19,6 +19,8 @@ export const useAppStore = create<AppState>()(
       customTone: DEFAULT_TONE,
       savedPresets: [],
       activePresetId: null,
+      timerDuration: null,
+      timerRemaining: null,
       togglePlayback: () => set((state) => ({ isPlaying: !state.isPlaying })),
       setTone: (value: number) =>
         set({ tone: value, customTone: value, activePresetId: null }),
@@ -52,6 +54,12 @@ export const useAppStore = create<AppState>()(
           activePresetId: id,
         });
       },
+      setTimerDuration: (seconds: number | null) =>
+        set({ timerDuration: seconds }),
+      setTimerRemaining: (seconds: number | null) =>
+        set({ timerRemaining: seconds }),
+      timerExpired: () =>
+        set({ isPlaying: false, timerRemaining: null }),
     }),
     {
       name: 'drift-presets',
