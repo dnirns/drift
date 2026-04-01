@@ -11,14 +11,16 @@
       "resizeMode": "contain",
       "backgroundColor": "#0A0A0F"
     },
+    "developmentClient": {
+      "silentLaunch": true
+    },
     "ios": {
       "supportsTablet": true,
+      "bundleIdentifier": "com.dnirns.drift",
       "infoPlist": {
-        "UIBackgroundModes": [
-          "audio"
-        ]
-      },
-      "bundleIdentifier": "com.anonymous.drift"
+        "UIBackgroundModes": ["audio"],
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -30,11 +32,9 @@
       "predictiveBackGestureEnabled": false,
       "permissions": [
         "android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK",
-        "android.permission.FOREGROUND_SERVICE",
-        "android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK",
         "android.permission.FOREGROUND_SERVICE"
       ],
-      "package": "com.anonymous.drift"
+      "package": "com.dnirns.drift"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -45,12 +45,17 @@
         {
           "iosBackgroundMode": true,
           "androidForegroundService": true,
-          "androidFSTypes": [
-            "mediaPlayback"
-          ]
+          "androidFSTypes": ["mediaPlayback"]
         }
       ],
+      "expo-dev-client",
       "expo-font"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "ed541e66-c47d-4038-9b43-e674d25621f7"
+      }
+    },
+    "owner": "dnirns-drift"
   }
 }

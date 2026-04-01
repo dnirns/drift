@@ -79,8 +79,8 @@ const styles = StyleSheet.create({
   },
   label: {
     color: COLORS.secondary,
-    fontFamily: 'BemboStd-Semibold',
-    fontSize: 14,
+    fontWeight: '500',
+    fontSize: 11,
     letterSpacing: 1.5,
     textTransform: 'uppercase',
     marginBottom: 12,

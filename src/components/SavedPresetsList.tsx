@@ -72,9 +72,9 @@ const styles = StyleSheet.create({
   },
   pillText: {
     color: COLORS.accent,
-    fontFamily: 'BemboStd-Semibold',
+    fontWeight: '500',
     fontSize: 12,
-    letterSpacing: 0.5,
+    letterSpacing: 0.3,
   },
   pillTextActive: {
     color: '#FFFFFF',

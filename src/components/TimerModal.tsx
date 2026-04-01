@@ -85,10 +85,11 @@ const styles = StyleSheet.create({
   },
   title: {
     color: COLORS.primary,
-    fontFamily: 'BemboStd-Semibold',
-    fontSize: 18,
+    fontWeight: '600',
+    fontSize: 16,
     marginBottom: 20,
     textAlign: 'center',
+    letterSpacing: 0.3,
   },
   presets: {
     flexDirection: 'row',
@@ -107,7 +108,7 @@ const styles = StyleSheet.create({
   },
   presetText: {
     color: COLORS.secondary,
-    fontFamily: 'BemboStd-Semibold',
+    fontWeight: '500',
     fontSize: 14,
   },
   presetTextActive: {

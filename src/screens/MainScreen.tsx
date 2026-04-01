@@ -53,9 +53,9 @@ const styles = StyleSheet.create({
   },
   title: {
     color: COLORS.primary,
-    fontFamily: 'BemboStd',
-    fontSize: 28,
-    letterSpacing: 6,
+    fontWeight: '300',
+    fontSize: 22,
+    letterSpacing: 8,
     textTransform: 'uppercase',
   },
   center: {

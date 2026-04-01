@@ -142,8 +142,8 @@ const styles = StyleSheet.create({
   },
   label: {
     color: COLORS.secondary,
-    fontFamily: 'BemboStd-Semibold',
-    fontSize: 14,
+    fontWeight: '500',
+    fontSize: 11,
     letterSpacing: 1.5,
     textTransform: 'uppercase',
     marginBottom: 12,
@@ -176,13 +176,13 @@ const styles = StyleSheet.create({
   },
   saveButtonText: {
     color: COLORS.accent,
-    fontFamily: 'BemboStd-Semibold',
+    fontWeight: '500',
     fontSize: 12,
     letterSpacing: 0.5,
   },
   description: {
     color: COLORS.secondary,
-    fontFamily: 'BemboStd',
+    fontWeight: '300',
     fontSize: 13,
     lineHeight: 20,
     textAlign: 'center',
@@ -203,8 +203,8 @@ const styles = StyleSheet.create({
   },
   pillText: {
     color: COLORS.secondary,
-    fontFamily: 'BemboStd-Semibold',
-    fontSize: 12,
+    fontWeight: '500',
+    fontSize: 11,
     letterSpacing: 0.5,
     textTransform: 'uppercase',
   },
