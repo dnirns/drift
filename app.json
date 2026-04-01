@@ -19,7 +19,8 @@
       "bundleIdentifier": "com.dnirns.drift",
       "infoPlist": {
         "UIBackgroundModes": ["audio"],
-        "ITSAppUsesNonExemptEncryption": false
+        "ITSAppUsesNonExemptEncryption": false,
+        "NSMicrophoneUsageDescription": "This app does not use the microphone. Audio playback only."
       }
     },
     "android": {
