@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import {
   StyleSheet,
   Text,
@@ -27,6 +28,13 @@ const Slider = ({ label, value, onValueChange, style }: SliderProps) => {
   const trackWidth = useSharedValue(0);
   const translateX = useSharedValue(0);
   const startX = useSharedValue(0);
+
+  // sync slider position when value prop changes (e.g. preset selection)
+  useEffect(() => {
+    if (trackWidth.value > 0) {
+      translateX.value = value * (trackWidth.value - THUMB_SIZE);
+    }
+  }, [value]);
 
   const onLayout = (event: LayoutChangeEvent) => {
     const width = event.nativeEvent.layout.width;
