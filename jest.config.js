@@ -4,11 +4,12 @@ module.exports = {
   setupFilesAfterEnv: ['./jest.setup.ts'],
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
+    '^@expo/vector-icons/(.*)$': '<rootDir>/src/__mocks__/expoVectorIcons.tsx',
   },
   transform: {
     '^.+\\.tsx?$': [
       'ts-jest',
-      { tsconfig: { jsx: 'react-jsx', esModuleInterop: true, paths: { '@/*': ['src/*'] } } },
+      { tsconfig: { jsx: 'react-jsx', esModuleInterop: true, paths: { '@/*': ['src/*'] }, typeRoots: ['src/__mocks__', 'node_modules/@types'] } },
     ],
   },
   transformIgnorePatterns: [

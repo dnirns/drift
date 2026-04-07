@@ -38,6 +38,9 @@ describe('TimerModal', () => {
     expect(screen.getByText('1 Hour')).toBeTruthy();
     expect(screen.getByText('4 Hours')).toBeTruthy();
     expect(screen.getByText('8 Hours')).toBeTruthy();
+    expect(screen.getByText('Custom')).toBeTruthy();
+    expect(screen.queryByText('Set')).toBeNull();
+    expect(screen.queryByTestId('custom-hours-picker')).toBeNull();
   });
 
   it('selects 1 hour preset and closes modal', () => {
@@ -73,5 +76,58 @@ describe('TimerModal', () => {
     fireEvent.press(screen.getByText('8 Hours'));
 
     expect(useAppStore.getState().timerDuration).toBe(28800);
+  });
+
+  it('sets a custom duration from the pickers', () => {
+    render(<TimerModal {...defaultProps} />);
+
+    fireEvent.press(screen.getByTestId('custom-timer-option'));
+    fireEvent(screen.getByTestId('custom-hours-picker'), 'onValueChange', 2);
+    fireEvent(screen.getByTestId('custom-minutes-picker'), 'onValueChange', 30);
+    fireEvent.press(screen.getByTestId('set-custom-timer-button'));
+
+    expect(useAppStore.getState().timerDuration).toBe(9000);
+    expect(useAppStore.getState().timerRemaining).toBe(9000);
+    expect(defaultProps.onClose).toHaveBeenCalled();
+  });
+
+  it('does not set a zero-length custom duration', () => {
+    render(<TimerModal {...defaultProps} />);
+
+    fireEvent.press(screen.getByTestId('custom-timer-option'));
+    fireEvent.press(screen.getByTestId('set-custom-timer-button'));
+
+    expect(useAppStore.getState().timerDuration).toBeNull();
+    expect(defaultProps.onClose).not.toHaveBeenCalled();
+  });
+
+  it('shows the custom picker only after selecting custom', () => {
+    render(<TimerModal {...defaultProps} />);
+
+    expect(screen.queryByTestId('custom-hours-picker')).toBeNull();
+
+    fireEvent.press(screen.getByTestId('custom-timer-option'));
+
+    expect(screen.getByTestId('custom-hours-picker')).toBeTruthy();
+    expect(screen.getByTestId('custom-minutes-picker')).toBeTruthy();
+    expect(screen.getByText('Set')).toBeTruthy();
+  });
+
+  it('keeps the custom picker closed when reopening the modal', () => {
+    const { rerender } = render(<TimerModal {...defaultProps} />);
+
+    fireEvent.press(screen.getByTestId('custom-timer-option'));
+    fireEvent(screen.getByTestId('custom-hours-picker'), 'onValueChange', 2);
+    fireEvent(screen.getByTestId('custom-minutes-picker'), 'onValueChange', 30);
+    fireEvent.press(screen.getByTestId('set-custom-timer-button'));
+
+    rerender(<TimerModal visible={false} onClose={defaultProps.onClose} />);
+    rerender(<TimerModal visible onClose={defaultProps.onClose} />);
+
+    expect(screen.queryByTestId('custom-hours-picker')).toBeNull();
+
+    fireEvent.press(screen.getByTestId('custom-timer-option'));
+
+    expect(screen.getByText('2 hr 30 min')).toBeTruthy();
   });
 });

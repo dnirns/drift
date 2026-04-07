@@ -1,4 +1,9 @@
 import '@testing-library/jest-native/extend-expect';
+import type { ReactNode } from 'react';
+import { UIManager } from 'react-native';
+
+UIManager.getViewManagerConfig = ((name: string) =>
+  name === 'RNCPicker' ? { Commands: {} } : { Commands: {} }) as typeof UIManager.getViewManagerConfig;
 
 // Mock AsyncStorage
 jest.mock('@react-native-async-storage/async-storage', () => ({
@@ -12,7 +17,7 @@ jest.mock('react-native-gesture-handler', () => {
   const View = require('react-native').View;
   return {
     GestureHandlerRootView: View,
-    GestureDetector: ({ children }: { children: React.ReactNode }) => children,
+    GestureDetector: ({ children }: { children: ReactNode }) => children,
     Gesture: {
       Pan: () => ({
         onStart: () => ({ onUpdate: () => ({ onEnd: () => ({}) }) }),
@@ -69,15 +74,47 @@ jest.mock('react-native-audio-api', () => ({
       gain: { value: 1 },
       connect: jest.fn(),
     }),
-    createBuffer: jest.fn().mockImplementation((channels, length, sampleRate) => ({
-      getChannelData: jest.fn().mockReturnValue(new Float32Array(length)),
-      length,
-      sampleRate,
-      numberOfChannels: channels,
-    })),
+    createBuffer: jest
+      .fn()
+      .mockImplementation((channels, length, sampleRate) => ({
+        getChannelData: jest.fn().mockReturnValue(new Float32Array(length)),
+        length,
+        sampleRate,
+        numberOfChannels: channels,
+      })),
   })),
   AudioBuffer: jest.fn(),
   AudioBufferSourceNode: jest.fn(),
   BiquadFilterNode: jest.fn(),
   GainNode: jest.fn(),
 }));
+
+jest.mock('@react-native-picker/picker', () => {
+  const React = require('react');
+  const { View } = require('react-native');
+
+  const Picker = ({
+    children,
+    selectedValue,
+    onValueChange,
+    testID,
+  }: {
+    children: ReactNode;
+    selectedValue?: number;
+    onValueChange?: (value: number) => void;
+    testID?: string;
+  }) =>
+    React.createElement(
+      View,
+      {
+        testID,
+        selectedValue,
+        onValueChange,
+      },
+      children,
+    );
+
+  Picker.Item = () => null;
+
+  return { Picker };
+});

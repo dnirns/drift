@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react-native';
 import { useAppStore } from '@/store/useAppStore';
-import TimerButton from '@/components/TimerButton';
+import TimerButton, { TimerCountdown } from '@/components/TimerButton';
 import {
   DEFAULT_VOLUME,
   DEFAULT_NOISE_COLOR,
@@ -23,14 +23,34 @@ beforeEach(() => {
 });
 
 describe('TimerButton', () => {
-  it('renders infinity symbol when no timer is set', () => {
+  it('renders infinity icon when no timer is set', () => {
     render(<TimerButton />);
-    expect(screen.getByText('∞')).toBeTruthy();
+    expect(screen.getByText('all-inclusive')).toBeTruthy();
+  });
+
+  it('renders timer icon when timer is set', () => {
+    useAppStore.setState({ timerDuration: 3600, timerRemaining: 3600 });
+    render(<TimerButton />);
+    expect(screen.getByText('timer')).toBeTruthy();
+  });
+
+  it('opens TimerModal when pressed', () => {
+    render(<TimerButton />);
+    fireEvent.press(screen.getByText('all-inclusive'));
+    expect(screen.getByText('Sleep Timer')).toBeTruthy();
+  });
+});
+
+describe('TimerCountdown', () => {
+  it('renders nothing when no timer is set', () => {
+    const { toJSON } = render(<TimerCountdown />);
+    // should render an empty container with no text
+    expect(screen.queryByText(/\d/)).toBeNull();
   });
 
   it('shows formatted duration when timer is set but not playing', () => {
     useAppStore.setState({ timerDuration: 3600, timerRemaining: 3600 });
-    render(<TimerButton />);
+    render(<TimerCountdown />);
     expect(screen.getByText('1:00:00')).toBeTruthy();
   });
 
@@ -40,13 +60,7 @@ describe('TimerButton', () => {
       timerRemaining: 2700,
       isPlaying: true,
     });
-    render(<TimerButton />);
+    render(<TimerCountdown />);
     expect(screen.getByText('45:00')).toBeTruthy();
-  });
-
-  it('opens TimerModal when pressed', () => {
-    render(<TimerButton />);
-    fireEvent.press(screen.getByText('∞'));
-    expect(screen.getByText('Sleep Timer')).toBeTruthy();
   });
 });
