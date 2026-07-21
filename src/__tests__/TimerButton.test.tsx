@@ -1,4 +1,5 @@
 import React from 'react';
+import { beforeEach, describe, expect, it } from '@jest/globals';
 import { render, screen, fireEvent } from '@testing-library/react-native';
 import { useAppStore } from '@/store/useAppStore';
 import TimerButton, { TimerCountdown } from '@/components/TimerButton';
@@ -43,7 +44,7 @@ describe('TimerButton', () => {
 
 describe('TimerCountdown', () => {
   it('renders nothing when no timer is set', () => {
-    const { toJSON } = render(<TimerCountdown />);
+    render(<TimerCountdown />);
     // should render an empty container with no text
     expect(screen.queryByText(/\d/)).toBeNull();
   });
