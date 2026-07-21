@@ -12,12 +12,14 @@ import {
 let appStateCallback: ((state: string) => void) | null = null;
 const mockRemove = jest.fn();
 
-jest.spyOn(AppState, 'addEventListener').mockImplementation(
-  (_type, callback) => {
+jest
+  .spyOn(AppState, 'addEventListener')
+  .mockImplementation((_type, callback) => {
     appStateCallback = callback as (state: string) => void;
-    return { remove: mockRemove } as ReturnType<typeof AppState.addEventListener>;
-  },
-);
+    return { remove: mockRemove } as ReturnType<
+      typeof AppState.addEventListener
+    >;
+  });
 
 beforeEach(() => {
   jest.useFakeTimers();
@@ -25,7 +27,9 @@ beforeEach(() => {
   mockRemove.mockClear();
 
   useAppStore.setState({
-    isPlaying: false,
+    audioStatus: 'idle',
+    audioError: null,
+    audioCommand: null,
     tone: PRESET_TONES[DEFAULT_NOISE_COLOR],
     volume: DEFAULT_VOLUME,
     noiseColor: DEFAULT_NOISE_COLOR,
@@ -42,11 +46,28 @@ afterEach(() => {
 });
 
 describe('useTimer', () => {
+  const setPlaybackStatus = (status: 'idle' | 'playing'): void => {
+    useAppStore.getState().setAudioEngineSnapshot(status, null);
+  };
+
+  it('does not start from requested playback alone', () => {
+    renderHook(() => useTimer());
+
+    act(() => {
+      useAppStore.getState().setTimerDuration(60);
+      useAppStore.getState().setTimerRemaining(60);
+      useAppStore.getState().requestPlay();
+      jest.advanceTimersByTime(5000);
+    });
+
+    expect(useAppStore.getState().timerRemaining).toBe(60);
+  });
+
   it('does nothing when timerDuration is null (infinity)', () => {
     renderHook(() => useTimer());
 
     act(() => {
-      useAppStore.getState().togglePlayback();
+      setPlaybackStatus('playing');
     });
 
     jest.advanceTimersByTime(5000);
@@ -62,7 +83,7 @@ describe('useTimer', () => {
     });
 
     act(() => {
-      useAppStore.getState().togglePlayback();
+      setPlaybackStatus('playing');
     });
 
     act(() => {
@@ -83,7 +104,7 @@ describe('useTimer', () => {
     });
 
     act(() => {
-      useAppStore.getState().togglePlayback(); // play
+      setPlaybackStatus('playing');
     });
 
     act(() => {
@@ -93,7 +114,7 @@ describe('useTimer', () => {
     const remainingBeforePause = useAppStore.getState().timerRemaining!;
 
     act(() => {
-      useAppStore.getState().togglePlayback(); // pause
+      setPlaybackStatus('idle');
     });
 
     act(() => {
@@ -113,14 +134,14 @@ describe('useTimer', () => {
     });
 
     act(() => {
-      useAppStore.getState().togglePlayback();
+      setPlaybackStatus('playing');
     });
 
     act(() => {
       jest.advanceTimersByTime(4000);
     });
 
-    expect(useAppStore.getState().isPlaying).toBe(false);
+    expect(useAppStore.getState().audioCommand?.type).toBe('pause');
     expect(useAppStore.getState().timerRemaining).toBeNull();
   });
 
@@ -133,7 +154,7 @@ describe('useTimer', () => {
     });
 
     act(() => {
-      useAppStore.getState().togglePlayback();
+      setPlaybackStatus('playing');
     });
 
     act(() => {
@@ -158,7 +179,7 @@ describe('useTimer', () => {
     });
 
     act(() => {
-      useAppStore.getState().togglePlayback();
+      setPlaybackStatus('playing');
     });
 
     act(() => {
@@ -181,7 +202,7 @@ describe('useTimer', () => {
     });
 
     act(() => {
-      useAppStore.getState().togglePlayback();
+      setPlaybackStatus('playing');
     });
 
     // simulate 50 seconds passing in background
@@ -208,7 +229,7 @@ describe('useTimer', () => {
     });
 
     act(() => {
-      useAppStore.getState().togglePlayback();
+      setPlaybackStatus('playing');
     });
 
     // simulate more than 5 seconds passing
@@ -217,7 +238,7 @@ describe('useTimer', () => {
     });
 
     // timer should have already expired from the interval
-    expect(useAppStore.getState().isPlaying).toBe(false);
+    expect(useAppStore.getState().audioCommand?.type).toBe('pause');
   });
 
   it('cleans up interval and AppState listener on unmount', () => {

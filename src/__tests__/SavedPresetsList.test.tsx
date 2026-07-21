@@ -18,7 +18,9 @@ const mockPresets = [
 
 beforeEach(() => {
   useAppStore.setState({
-    isPlaying: false,
+    audioStatus: 'idle',
+    audioError: null,
+    audioCommand: null,
     tone: PRESET_TONES[DEFAULT_NOISE_COLOR],
     volume: DEFAULT_VOLUME,
     noiseColor: DEFAULT_NOISE_COLOR,

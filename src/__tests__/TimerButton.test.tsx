@@ -11,7 +11,9 @@ import {
 
 beforeEach(() => {
   useAppStore.setState({
-    isPlaying: false,
+    audioStatus: 'idle',
+    audioError: null,
+    audioCommand: null,
     tone: PRESET_TONES[DEFAULT_NOISE_COLOR],
     volume: DEFAULT_VOLUME,
     noiseColor: DEFAULT_NOISE_COLOR,
@@ -59,7 +61,7 @@ describe('TimerCountdown', () => {
     useAppStore.setState({
       timerDuration: 3600,
       timerRemaining: 2700,
-      isPlaying: true,
+      audioStatus: 'playing',
     });
     render(<TimerCountdown />);
     expect(screen.getByText('45:00')).toBeTruthy();

@@ -4,17 +4,16 @@ import PlayButton from '@/components/PlayButton';
 import NoiseColorSelector from '@/components/NoiseColorSelector';
 import TimerButton, { TimerCountdown } from '@/components/TimerButton';
 import Slider from '@/components/Slider';
-import { useAudioEngine } from '@/hooks/useAudioEngine';
 import { useTimer } from '@/hooks/useTimer';
 import { useAppStore } from '@/store/useAppStore';
 import { COLORS } from '@/constants/theme';
 
 export default function MainScreen() {
-  useAudioEngine();
   useTimer();
 
   const volume = useAppStore((s) => s.volume);
   const setVolume = useAppStore((s) => s.setVolume);
+  const audioError = useAppStore((s) => s.audioError);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -26,6 +25,11 @@ export default function MainScreen() {
 
       <View style={styles.center}>
         <PlayButton />
+        {audioError ? (
+          <Text accessibilityRole="alert" style={styles.audioError}>
+            Playback failed. Tap play to retry.
+          </Text>
+        ) : null}
       </View>
 
       <View style={styles.sliders}>
@@ -59,6 +63,11 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  audioError: {
+    color: COLORS.secondary,
+    fontSize: 13,
+    marginTop: 18,
   },
   sliders: {
     paddingBottom: 32,

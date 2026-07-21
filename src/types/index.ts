@@ -1,4 +1,11 @@
-export type NoiseColor = 'white' | 'pink' | 'brown' | 'blue' | 'custom';
+import type {
+  AudioCommand,
+  AudioEngineError,
+  AudioStatus,
+  NoiseColor,
+} from '@/audio/types';
+
+export type { NoiseColor } from '@/audio/types';
 
 export interface CustomPreset {
   id: string;
@@ -7,7 +14,9 @@ export interface CustomPreset {
 }
 
 export interface StoreState {
-  isPlaying: boolean;
+  audioStatus: AudioStatus;
+  audioError: AudioEngineError | null;
+  audioCommand: AudioCommand | null;
   tone: number; // normalized 0–1
   volume: number; // normalized 0–1
   noiseColor: NoiseColor;
@@ -16,7 +25,12 @@ export interface StoreState {
   activePresetId: string | null;
   timerDuration: number | null; // selected duration in seconds, null = infinity
   timerRemaining: number | null; // seconds left on active countdown, null = infinity
-  togglePlayback: () => void;
+  requestPlay: () => void;
+  requestPause: () => void;
+  setAudioEngineSnapshot: (
+    status: AudioStatus,
+    error: AudioEngineError | null,
+  ) => void;
   setTone: (value: number) => void;
   setVolume: (value: number) => void;
   setNoiseColor: (color: NoiseColor) => void;

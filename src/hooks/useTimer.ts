@@ -37,10 +37,12 @@ export const useTimer = (): void => {
   useEffect(() => {
     // subscribe to store changes for play/pause and timer duration
     const unsubscribe = useAppStore.subscribe((state, prevState) => {
-      const { isPlaying, timerDuration, timerRemaining } = state;
+      const { audioStatus, timerDuration, timerRemaining } = state;
+      const isPlaying = audioStatus === 'playing';
+      const wasPlaying = prevState.audioStatus === 'playing';
 
       // playback started
-      if (isPlaying && !prevState.isPlaying) {
+      if (isPlaying && !wasPlaying) {
         if (timerDuration !== null) {
           const remaining = timerRemaining ?? timerDuration;
           useAppStore.getState().setTimerRemaining(remaining);
@@ -50,7 +52,7 @@ export const useTimer = (): void => {
       }
 
       // playback stopped (pause or timer expiry)
-      if (!isPlaying && prevState.isPlaying) {
+      if (!isPlaying && wasPlaying) {
         clearCountdown();
         return;
       }
@@ -74,8 +76,8 @@ export const useTimer = (): void => {
       'change',
       (nextAppState) => {
         if (nextAppState === 'active' && endTimeRef.current !== null) {
-          const { isPlaying } = useAppStore.getState();
-          if (!isPlaying) return;
+          const { audioStatus } = useAppStore.getState();
+          if (audioStatus !== 'playing') return;
 
           const secondsLeft = Math.max(
             0,

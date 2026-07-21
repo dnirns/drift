@@ -7,7 +7,9 @@ import {
 
 beforeEach(() => {
   useAppStore.setState({
-    isPlaying: false,
+    audioStatus: 'idle',
+    audioError: null,
+    audioCommand: null,
     tone: PRESET_TONES[DEFAULT_NOISE_COLOR],
     volume: DEFAULT_VOLUME,
     noiseColor: DEFAULT_NOISE_COLOR,
@@ -22,22 +24,40 @@ beforeEach(() => {
 describe('useAppStore', () => {
   it('has correct initial state', () => {
     const state = useAppStore.getState();
-    expect(state.isPlaying).toBe(false);
+    expect(state.audioStatus).toBe('idle');
+    expect(state.audioError).toBeNull();
     expect(state.volume).toBe(DEFAULT_VOLUME);
     expect(state.noiseColor).toBe('white');
     expect(state.tone).toBe(PRESET_TONES.white);
   });
 
-  describe('togglePlayback', () => {
-    it('toggles isPlaying from false to true', () => {
-      useAppStore.getState().togglePlayback();
-      expect(useAppStore.getState().isPlaying).toBe(true);
+  describe('playback commands', () => {
+    it('requests playback without optimistically changing status', () => {
+      useAppStore.getState().requestPlay();
+      expect(useAppStore.getState().audioCommand?.type).toBe('play');
+      expect(useAppStore.getState().audioStatus).toBe('idle');
     });
 
-    it('toggles isPlaying from true to false', () => {
-      useAppStore.getState().togglePlayback();
-      useAppStore.getState().togglePlayback();
-      expect(useAppStore.getState().isPlaying).toBe(false);
+    it('creates a new command for every explicit request', () => {
+      useAppStore.getState().requestPlay();
+      const playCommandId = useAppStore.getState().audioCommand?.id;
+      useAppStore.getState().requestPause();
+      expect(useAppStore.getState().audioCommand?.type).toBe('pause');
+      expect(useAppStore.getState().audioCommand?.id).toBeGreaterThan(
+        playCommandId ?? 0,
+      );
+    });
+
+    it('stores actual engine status and errors separately', () => {
+      const audioError = {
+        code: 'context-resume-failed' as const,
+        message: 'resume failed',
+      };
+      useAppStore.getState().setAudioEngineSnapshot('error', audioError);
+      expect(useAppStore.getState()).toMatchObject({
+        audioStatus: 'error',
+        audioError,
+      });
     });
   });
 
@@ -108,15 +128,16 @@ describe('useAppStore', () => {
     });
 
     it('timerExpired stops playback and clears remaining', () => {
-      useAppStore.setState({ isPlaying: true, timerRemaining: 10 });
+      useAppStore.setState({ audioStatus: 'playing', timerRemaining: 10 });
       useAppStore.getState().timerExpired();
-      expect(useAppStore.getState().isPlaying).toBe(false);
+      expect(useAppStore.getState().audioCommand?.type).toBe('pause');
+      expect(useAppStore.getState().audioStatus).toBe('playing');
       expect(useAppStore.getState().timerRemaining).toBeNull();
     });
 
     it('timerExpired does not clear timerDuration', () => {
       useAppStore.setState({
-        isPlaying: true,
+        audioStatus: 'playing',
         timerDuration: 3600,
         timerRemaining: 0,
       });

@@ -10,13 +10,13 @@ import TimerModal from './TimerModal';
 export const TimerCountdown = memo(function TimerCountdown() {
   const timerDuration = useAppStore((s) => s.timerDuration);
   const timerRemaining = useAppStore((s) => s.timerRemaining);
-  const isPlaying = useAppStore((s) => s.isPlaying);
+  const audioStatus = useAppStore((s) => s.audioStatus);
 
   const isActive = timerDuration !== null;
 
   const getDisplayText = (): string => {
     if (!isActive) return '';
-    if (isPlaying && timerRemaining !== null) {
+    if (audioStatus === 'playing' && timerRemaining !== null) {
       return formatTimeRemaining(timerRemaining);
     }
     return formatTimeRemaining(timerRemaining ?? timerDuration);

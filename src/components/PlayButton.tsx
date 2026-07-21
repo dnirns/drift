@@ -1,4 +1,4 @@
-import { Pressable, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, Pressable, StyleSheet, View } from 'react-native';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -25,9 +25,13 @@ const PauseIcon = () => {
 };
 
 const PlayButton = () => {
-  const isPlaying = useAppStore((s) => s.isPlaying);
-  const togglePlayback = useAppStore((s) => s.togglePlayback);
+  const audioStatus = useAppStore((s) => s.audioStatus);
+  const requestPlay = useAppStore((s) => s.requestPlay);
+  const requestPause = useAppStore((s) => s.requestPause);
   const scale = useSharedValue(1);
+  const isPlaying = audioStatus === 'playing';
+  const isTransitioning =
+    audioStatus === 'starting' || audioStatus === 'pausing';
 
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ scale: scale.value }],
@@ -41,14 +45,32 @@ const PlayButton = () => {
     scale.value = withSpring(1, { damping: 15, stiffness: 300 });
   };
 
+  const handlePress = (): void => {
+    if (isPlaying) {
+      requestPause();
+      return;
+    }
+
+    requestPlay();
+  };
+
   return (
     <AnimatedPressable
       style={[styles.button, animatedStyle]}
-      onPress={togglePlayback}
+      accessibilityRole="button"
+      accessibilityLabel={isPlaying ? 'Pause noise' : 'Play noise'}
+      disabled={isTransitioning}
+      onPress={handlePress}
       onPressIn={handlePressIn}
       onPressOut={handlePressOut}
     >
-      {isPlaying ? <PauseIcon /> : <PlayIcon />}
+      {isTransitioning ? (
+        <ActivityIndicator color={COLORS.primary} size="large" />
+      ) : isPlaying ? (
+        <PauseIcon />
+      ) : (
+        <PlayIcon />
+      )}
     </AnimatedPressable>
   );
 };
